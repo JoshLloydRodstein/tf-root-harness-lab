@@ -1,0 +1,15 @@
+# Copy this file to terraform.tfvars and adjust as needed.
+# terraform.tfvars is gitignored by default (see ../.gitignore).
+
+aws_region        = "us-east-1"
+budget_name       = "harness-fde-lab-monthly-budget"
+monthly_limit_usd = 100
+alert_emails      = ["you@example.com"]
+
+# notifications defaults to 80% actual + 100% forecasted (see variables.tf).
+# Uncomment to customize, e.g. add an earlier warning:
+# notifications = [
+#   { threshold_percent = 50, type = "ACTUAL" },
+#   { threshold_percent = 80, type = "ACTUAL" },
+#   { threshold_percent = 100, type = "FORECASTED" },
+# ]

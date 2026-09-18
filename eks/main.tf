@@ -84,6 +84,12 @@ module "eks" {
       max_size     = var.node_max_size
       desired_size = var.node_desired_size
 
+      # Specific (not generic "default") Name so orphaned node groups/ASGs
+      # are identifiable at a glance in the console or via CLI list calls.
+      tags = {
+        Name = "${var.cluster_name}-node-default"
+      }
+
       # The Harness Delegate + your CI/CD workload pods need a bit of
       # headroom; gp3 is cheaper than the old gp2 default.
       block_device_mappings = {
@@ -100,10 +106,15 @@ module "eks" {
 
   # A couple of the core addons pinned to "most recent compatible" so you
   # don't have to think about addon versions for this lab.
+  # vpc-cni needs before_compute = true so it's created before the node group;
+  # otherwise nodes wait on CNI to go Ready while CNI waits on the node group
+  # to exist first -- a circular wait that never resolves in a single apply.
   addons = {
-    coredns                = {}
-    kube-proxy             = {}
-    vpc-cni                = {}
+    coredns    = {}
+    kube-proxy = {}
+    vpc-cni = {
+      before_compute = true
+    }
     eks-pod-identity-agent = {}
   }
 }
